@@ -16,9 +16,9 @@ class BadgeSeeder extends Seeder
     {
         $badges = [
             ["name" => "Beginner: 0 Achievements", "threshold" => 0],
-            ["name" => "Intermediate: 4 Achievements", "threshold" => 0],
-            ["name" => "Advanced: 8 Achievements", "threshold" => 0],
-            ["name" => "Master: 10 Achievements", "threshold" => 0],
+            ["name" => "Intermediate: 4 Achievements", "threshold" => 4],
+            ["name" => "Advanced: 8 Achievements", "threshold" => 8],
+            ["name" => "Master: 10 Achievements", "threshold" => 10],
         ];
         DB::table('badges')->insert($badges);
     }
