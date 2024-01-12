@@ -15,7 +15,7 @@ class UserProgressEndPointTest extends TestCase
     /**
      * A basic feature test example.
      */
-    public function test_it_returns_user_progress_data(): void
+    public function test_endpoint_returns_expected_achievement_data(): void
     {
         $this->artisan('db:seed');
 
@@ -31,15 +31,17 @@ class UserProgressEndPointTest extends TestCase
         $currentBadge = $user->badges()->orderBy('threshold', 'desc')->get()->first();
         $nextBadge = Badge::where('threshold', '>', $currentBadge->threshold ?? -1)->orderBy('threshold', 'asc')->get()->first();
 
+        $expectedData = [
+            'unlocked_achievements' => $this->getNamesList($achievementsUnlocked),
+            'next_available_achievements' => $this->getNamesList($nextAchievements),
+            'current_badge' => $currentBadge->name ?? null,
+            'next_badge' => $nextBadge->name ?? null,
+            'remaining_to_unlock_next_badge' => $this->getRemainingToUnlockBadge($currentBadge, $nextBadge)
+        ];
+
         $response = $this->get("/users/{$user->id}/achievements");
         $response->assertStatus(200)
-            ->assertJson([
-                'unlocked_achievements' => $this->getNamesList($achievementsUnlocked),
-                'next_available_achievements' => $this->getNamesList($nextAchievements),
-                'current_badge' => $currentBadge->name ?? null,
-                'next_badge' => $nextBadge->name ?? null,
-                'remaining_to_unlock_next_badge' => $this->getRemainingToUnlockBadge($currentBadge, $nextBadge)
-            ]);
+            ->assertJsonFragment($expectedData);
     }
     public function getNamesList($items)
     {

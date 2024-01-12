@@ -38,4 +38,24 @@ class BadgeService
         return $user->achievements()->count();
     }
 
+    public function getCurrentBadge(User $user)
+    {
+        return $user->badges()->orderBy('threshold', 'desc')->get()->first();
+    }
+    public function getNextBadge(User $user)
+    {
+        $currentBadge = $this->getCurrentBadge($user);
+        return Badge::where('threshold', '>', $currentBadge->threshold ?? -1)->orderBy('threshold', 'asc')->get()->first();
+
+    }
+
+    public function getRemainingToUnlockBadge(User $user): int
+    {
+        $currentBadge = $this->getCurrentBadge($user);
+        $nextBadge = $this->getNextBadge($user);
+
+        $remaining = $currentBadge->threshold ?? 0 - $nextBadge->threshold ?? 0;
+        return $remaining > 0 ? $remaining : 0;
+    }
+
 }

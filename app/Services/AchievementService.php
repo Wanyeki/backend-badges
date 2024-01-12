@@ -42,4 +42,44 @@ class AchievementService
             $user->lessons->count();
     }
 
+    public function getUnlockedAchievements(User $user)
+    {
+        return $this->getNamesList($user->achievements()->orderBy('threshold', 'asc')->get()->toArray());
+    }
+
+    public function getNextAvailableAchievements(User $user)
+    {
+        $nextAvailableAchievement = [];
+
+        $currentLessonAchievement = $this->getCurrentUserAchievement($user, 'lesson');
+        $currentCommentAchievements = $this->getCurrentUserAchievement($user, 'comment');
+
+        $nextLessonAchievement = $this->getNextAchievement($currentLessonAchievement->threshold ?? -1, 'lesson');
+        $nextCommentAchievement = $this->getNextAchievement($currentCommentAchievements->threshold ?? -1, 'comment');
+
+        $nextLessonAchievement != null ? array_push($nextAvailableAchievement, $nextLessonAchievement->name) : null;
+        $nextCommentAchievement != null ? array_push($nextAvailableAchievement, $nextCommentAchievement->name) : null;
+
+        return $nextAvailableAchievement;
+        ;
+    }
+    public function getCurrentUserAchievement(User $user, string $type)
+    {
+        return $user->achievements()->where('type', $type)->orderBy('threshold', 'desc')->get()->first();
+    }
+
+    public function getNextAchievement(int $currentThreshold, string $type)
+    {
+        return Achievement::where('type', $type)
+            ->where('threshold', '>', $currentThreshold)
+            ->orderBy('threshold', 'asc')
+            ->get()
+            ->first();
+    }
+    public function getNamesList($items)
+    {
+        return array_map(function ($item) {
+            return $item['name'] ?? '';
+        }, $items);
+    }
 }
