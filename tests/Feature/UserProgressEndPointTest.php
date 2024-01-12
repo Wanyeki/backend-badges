@@ -21,22 +21,14 @@ class UserProgressEndPointTest extends TestCase
 
         $user = User::factory()->create();
 
+        [$lessonAchievementsGiven, $lessonNextAchievement] = $this->giveUserAchievements('lesson', $user);
+        [$commentAchievementsGiven, $commentNextAchievement] = $this->giveUserAchievements('comment', $user);
+        $this->giveUserBadges($user);
 
-        $lessonAchievements = Achievement::where('type', 'lesson')->orderBy('threshold', 'asc')->get();
-        $achievementsUnlocked = $lessonAchievements->take(3)->toArray();
-        $user->achievements()->attach($lessonAchievements->take(3));
-        $nextAchievements = $lessonAchievements->slice(2, 1)->toArray();
+        $achievementsUnlocked = [...$lessonAchievementsGiven, ...$commentAchievementsGiven];
+        $nextAchievements = [...$lessonNextAchievement, ...$commentNextAchievement];
 
-        $commentAchievements = Achievement::where('type', 'comment')->orderBy('threshold', 'asc')->get();
-        $achievementsUnlocked = [...$achievementsUnlocked, ...$commentAchievements->take(3)->toArray()];
-        $nextAchievements = [...$nextAchievements, ...$commentAchievements->slice(2, 1)->toArray()];
-        $user->achievements()->attach($commentAchievements->take(3));
-
-
-        $badges = Badge::orderBy('threshold', 'asc')->get();
-        $user->badges()->attach($badges->take(2));
         $currentBadge = $user->badges()->orderBy('threshold', 'desc')->get()->first();
-
         $nextBadge = Badge::where('threshold', '>', $currentBadge->threshold ?? -1)->orderBy('threshold', 'asc')->get()->first();
 
         $response = $this->get("/users/{$user->id}/achievements");
@@ -55,9 +47,22 @@ class UserProgressEndPointTest extends TestCase
             return $item['name'] ?? '';
         }, $items);
     }
-    public function getRemainingToUnlockBadge(Badge $currentBadge, Badge $nextBadge)
+    public function getRemainingToUnlockBadge(?Badge $currentBadge, ?Badge $nextBadge)
     {
         $remaining = $currentBadge->threshold ?? 0 - $nextBadge->threshold ?? 0;
         return $remaining > 0 ? $remaining : 0;
+    }
+    public function giveUserAchievements(string $type, User $user)
+    {
+        $typeAchievements = Achievement::where('type', $type)->orderBy('threshold', 'asc')->get();
+        $achievementsUnlocked = $typeAchievements->take(3)->toArray();
+        $user->achievements()->attach($typeAchievements->take(3));
+        $nextAchievements = $typeAchievements->slice(3, 1)->toArray();
+        return [$achievementsUnlocked, $nextAchievements];
+    }
+    public function giveUserBadges(User $user)
+    {
+        $badges = Badge::orderBy('threshold', 'asc')->get();
+        $user->badges()->attach($badges->take(2));
     }
 }
