@@ -13,8 +13,8 @@ return new class extends Migration {
         Schema::create('badge_user', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->foreignId('user_id')->constrained();
-            $table->foreignId('badge_id')->constrained();
+            $table->foreignId('user_id');
+            $table->foreignId('badge_id');
         });
     }
 
