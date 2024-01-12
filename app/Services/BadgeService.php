@@ -19,14 +19,14 @@ class BadgeService
     }
     public function unlockBadge(Badge $badge, User $user): void
     {
-        $user->achievements()->attach($badge);
+        $user->badges()->attach($badge);
         BadgeUnlocked::dispatch($badge, $user);
     }
     public function badgeIsUnlocked(User $user, Badge $badge): bool
     {
         return $user->badges()->where('badge_id', $badge->id)->exists();
     }
-    public function getBadgeToUnlock($number): ?Badge
+    public function getBadgeToUnlock(int $number): ?Badge
     {
         return Badge::where('threshold', '<=', $number)
             ->orderBy('threshold', 'desc')
@@ -38,11 +38,11 @@ class BadgeService
         return $user->achievements()->count();
     }
 
-    public function getCurrentBadge(User $user)
+    public function getCurrentBadge(User $user): ?Badge
     {
         return $user->badges()->orderBy('threshold', 'desc')->get()->first();
     }
-    public function getNextBadge(User $user)
+    public function getNextBadge(User $user): ?Badge
     {
         $currentBadge = $this->getCurrentBadge($user);
         return Badge::where('threshold', '>', $currentBadge->threshold ?? -1)->orderBy('threshold', 'asc')->get()->first();

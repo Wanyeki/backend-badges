@@ -80,5 +80,21 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Achievement::class);
     }
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::created(function (User $user) {
+            $zeroAchievement = Achievement::where('threshold', 0)->get()->first();
+            $zeroBadge = Badge::where('threshold', 0)->get()->first();
+
+            if (isset($zeroAchievement)) {
+                $user->achievements()->attach($zeroAchievement);
+            };
+            if (isset($zeroBadge)) {
+                $user->badges()->attach($zeroBadge);
+            };
+        });
+    }
 }
 
