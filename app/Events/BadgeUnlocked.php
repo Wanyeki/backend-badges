@@ -28,6 +28,4 @@ class BadgeUnlocked
             "user" => $user,
         ];
     }
-
-
 }

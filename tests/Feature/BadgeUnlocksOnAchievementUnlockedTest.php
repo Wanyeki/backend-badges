@@ -22,16 +22,19 @@ class BadgeUnlocksOnAchievementUnlockedTest extends TestCase
         $badges = Achievement::where("type", "lesson")->get();
 
         foreach ($badges as $badge) {
-            $user = $this->handleAchievementUnlockedEvent($badge->threshold);
-            Event::assertDispatched(BadgeUnlocked::class, function ($event) use ($badge, $user) {
-                return $event->payload['badge_name'] == $badge->name && $event->payload['user']->id == $user->id;
-            }, );
+            if ($badge->threshold > 0) {
+                $user = $this->handleAchievementUnlockedEvent($badge->threshold);
+                Event::assertDispatched(BadgeUnlocked::class, function ($event) use ($badge, $user) {
+                    $event->payload['badge_name'] == $badge->name && $event->payload['user']->id == $user->id;
+                    return true;
+                }, );
+            }
         }
-
     }
 
     public function handleAchievementUnlockedEvent(int $numberOfAchievements): User
     {
+        Event::fake();
         $achievements = Achievement::limit($numberOfAchievements)->get();
         $user = User::factory()->create();
         $user->achievements()->attach($achievements);

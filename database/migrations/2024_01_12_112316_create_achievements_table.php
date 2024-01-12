@@ -16,6 +16,7 @@ return new class extends Migration {
             $table->string('name', 100);
             $table->unsignedInteger('threshold');
             $table->enum('type', ['comment', 'lesson']);
+
         });
     }
 

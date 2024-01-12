@@ -16,6 +16,8 @@ class AchievementUnlockedEventTest extends TestCase
     use RefreshDatabase;
     public function test_unlock_achievement_listener_handles_comment_event(): void
     {
+        $this->artisan('db:seed');
+
         $this->initAndFireEvent();
         Event::assertListening(AchievementUnlocked::class, CheckAndUnlockBadge::class);
     }

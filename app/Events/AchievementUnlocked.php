@@ -21,7 +21,6 @@ class AchievementUnlocked
      */
     public function __construct(Achievement $achievement, User $user)
     {
-
         $this->achievement = $achievement;
         $this->user = $user;
         $this->payload = [
@@ -29,4 +28,5 @@ class AchievementUnlocked
             "user" => $user,
         ];
     }
+
 }

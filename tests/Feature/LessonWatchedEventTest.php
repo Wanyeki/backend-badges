@@ -12,18 +12,13 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
 
-class LessonWatchedEventListenerTest extends TestCase
+class LessonWatchedEventTest extends TestCase
 {
     use RefreshDatabase;
     public function test_unlock_achievement_listener_handles_watch_event(): void
     {
         $this->fireEvent();
         Event::assertListening(LessonWatched::class, CheckAndUnlockAchievement::class);
-    }
-    public function test_unlock_badges_listener_handles_watch_event(): void
-    {
-        $this->fireEvent();
-        Event::assertListening(LessonWatched::class, CheckAndUnlockBadge::class);
     }
     private function fireEvent(): void
     {
@@ -33,5 +28,4 @@ class LessonWatchedEventListenerTest extends TestCase
 
         event(new LessonWatched($lesson, $user));
     }
-
 }

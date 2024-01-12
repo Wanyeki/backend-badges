@@ -71,14 +71,14 @@ class User extends Authenticatable
      */
     public function badges()
     {
-        return $this->belongsToMany(Badge::class)->wherePivot('unlocked', true);
+        return $this->belongsToMany(Badge::class);
     }
     /**
      * The achievements that a user has unlocked.
      */
     public function achievements()
     {
-        return $this->belongsToMany(Achievement::class)->wherePivot('unlocked', true);
+        return $this->belongsToMany(Achievement::class);
     }
 }
 

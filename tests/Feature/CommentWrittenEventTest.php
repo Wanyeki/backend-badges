@@ -9,22 +9,17 @@ use App\Models\Comment;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-use Tests\TestCase;
 use Illuminate\Support\Facades\Event;
+use Tests\TestCase;
 
-
-class CommentWrittenEventListenerTest extends TestCase
+class CommentWrittenEventTest extends TestCase
 {
+
     use RefreshDatabase;
     public function test_unlock_achievement_listener_handles_comment_event(): void
     {
         $this->initAndFireEvent();
         Event::assertListening(CommentWritten::class, CheckAndUnlockAchievement::class);
-    }
-    public function test_unlock_badge_listener_handles_comment_event(): void
-    {
-        $this->initAndFireEvent();
-        Event::assertListening(CommentWritten::class, CheckAndUnlockBadge::class);
     }
     private function initAndFireEvent(): void
     {

@@ -2,6 +2,7 @@
 
 namespace App\Listeners;
 
+use App\Models\Comment;
 use App\Models\User;
 use App\Services\AchievementService;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -11,6 +12,14 @@ class CheckAndUnlockAchievement
 {
     /**
      * Create the event listener.
+     */
+    public function __construct()
+    {
+    }
+
+
+    /**
+     * Handle the event.
      */
     public function handle(object $event): void
     {
@@ -40,4 +49,5 @@ class CheckAndUnlockAchievement
     {
         return $type == 'lesson' ? $event->user : $event->comment->user;
     }
+
 }

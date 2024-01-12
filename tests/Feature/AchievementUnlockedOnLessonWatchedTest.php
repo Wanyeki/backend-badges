@@ -9,12 +9,12 @@ use App\Models\Achievement;
 use App\Models\Lesson;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
 
 class AchievementUnlockedOnLessonWatchedTest extends TestCase
 {
+
     use RefreshDatabase;
     public function test_correct_achievement_is_unlocked_after_lesson_is_watched(): void
     {

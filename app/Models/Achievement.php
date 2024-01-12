@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Achievement extends Model
 {
     use HasFactory;
-      /**
+    /**
      * The users that have unlocked this achievement
      */
     public function users()
