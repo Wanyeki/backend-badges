@@ -19,15 +19,18 @@ class EventServiceProvider extends ServiceProvider
     protected $listen = [
         Registered::class => [
             SendEmailVerificationNotification::class,
-            CommentWritten::class => [
-                CheckAndUnlockAchievement::class,
-                CheckAndUnlockBadge::class,
-            ],
-            LessonWatched::class => [
-                CheckAndUnlockAchievement::class,
-                CheckAndUnlockBadge::class,
-            ],
         ],
+        CommentWritten::class => [
+            checkAndUnlockAchievements::class,
+
+        ],
+        LessonWatched::class => [
+            checkAndUnlockAchievements::class,
+
+        ],
+        AchievementUnlocked::class => [
+            checkAndUnlockBadges::class,
+        ]
     ];
 
     /**
